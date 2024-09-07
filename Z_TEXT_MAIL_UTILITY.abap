@@ -25,6 +25,7 @@ FUNCTION z_text_mail_utility.
   "Author - Harsh Sharma
 
   DATA: ls_text_lines     TYPE soli,
+        ls_text_temp      TYPE tline,
         lo_sender_mail    TYPE REF TO if_sender_bcs,
         lo_recepient_mail TYPE REF TO if_recipient_bcs,
         lt_doc            TYPE soli_tab,  " for mail text
@@ -128,7 +129,17 @@ FUNCTION z_text_mail_utility.
       ELSE.
         RAISE incorrect_param_for_mail.
       ENDIF.
-      MOVE-CORRESPONDING t_text_lines[] TO lt_doc[].
+      lt_text_lines = t_text_lines[].
+
+      LOOP AT lt_text_lines ASSIGNING FIELD-SYMBOL(<fs>)
+        WHERE tdformat IS NOT INITIAL.
+        <fs>-tdformat = space.
+      ENDLOOP.
+
+      UNASSIGN <fs>.
+
+      lt_doc[] = lt_text_lines[].
+
       lo_doc = cl_document_bcs=>create_document(
                       EXPORTING
                         i_type          =  'RAW'    " Code for Document Class
@@ -143,7 +154,10 @@ FUNCTION z_text_mail_utility.
           i_recipient     =  lo_recepient_mail
       ).
       lo_send->set_send_immediately( i_send_immediately = abap_true ).
-      lo_send->send( ).
+      DATA(lv_result) = lo_send->send( ).
+      IF lv_result <> 'X'.
+
+      ENDIF.
     ENDIF.
   ENDIF.
 ENDFUNCTION.
