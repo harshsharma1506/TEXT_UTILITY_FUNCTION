@@ -30,7 +30,8 @@ FUNCTION z_text_mail_utility.
         lo_recepient_mail TYPE REF TO if_recipient_bcs,
         lt_doc            TYPE soli_tab,  " for mail text
         ls_doc            TYPE LINE OF soli_tab,
-        lo_doc            TYPE REF TO cl_document_bcs.
+        lo_doc            TYPE REF TO cl_document_bcs,
+        lt_td_format      TYPE STANDARD TABLE OF char2.
 *--> Initial  Validation
   SELECT SINGLE tdname FROM stxh
     WHERE tdid = @i_txt_id
@@ -131,14 +132,19 @@ FUNCTION z_text_mail_utility.
       ENDIF.
       lt_text_lines = t_text_lines[].
 
-      LOOP AT lt_text_lines ASSIGNING FIELD-SYMBOL(<fs>)
-        WHERE tdformat IS NOT INITIAL.
-        <fs>-tdformat = space.
+      lt_doc[] = lt_text_lines[].
+
+      LOOP AT lt_doc ASSIGNING FIELD-SYMBOL(<fs>).
+        DATA(ls_var)  = find_any_of( val = <fs>-line sub = '*=/:' ).
+        IF ls_var <> -1.
+          ls_var = ls_var + 1.
+          REPLACE ALL OCCURRENCES OF <fs>-line(ls_var) IN <fs>-line WITH space.
+          CONDENSE <fs>-line.
+        ENDIF.
+        CONDENSE <fs>-line.
       ENDLOOP.
 
       UNASSIGN <fs>.
-
-      lt_doc[] = lt_text_lines[].
 
       lo_doc = cl_document_bcs=>create_document(
                       EXPORTING
