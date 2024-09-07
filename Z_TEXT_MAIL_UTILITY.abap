@@ -81,6 +81,8 @@ FUNCTION z_text_mail_utility.
               RAISE variable_not_found.
             ENDIF.
           ENDLOOP.
+          t_mess = VALUE #( type = 'I' message_v1 = 'All text symbols found' ).
+          APPEND t_mess TO t_mess[].
         ELSE.
           RAISE others_issue.
         ENDIF.
@@ -162,7 +164,8 @@ FUNCTION z_text_mail_utility.
       lo_send->set_send_immediately( i_send_immediately = abap_true ).
       DATA(lv_result) = lo_send->send( ).
       IF lv_result <> 'X'.
-
+        t_mess = VALUE #( id = 'E' message_v1 = 'Mail has not been sent').
+        APPEND t_mess TO t_mess[].
       ENDIF.
     ENDIF.
   ENDIF.
