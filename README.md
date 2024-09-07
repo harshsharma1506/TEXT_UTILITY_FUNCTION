@@ -43,5 +43,19 @@ Recently while working on one file interface to AL11, I had to send mail as well
    After this we must save a warning message in MESS_TAB so that the user can check if there's any variable left
    at times people use '&' for 'and' so warning is fine.
 
+### SO10 text to be used for testing 
+```
+*	 	Hello &lv_username&,
+*	 	Your order has been shipped from port &lv_port& , it is being carried
+=	 	via carriage: &lv_carriage&. Please visit www.testdata.com/orders
+=	 	for further details.
+*	 	Thanks,
+*	 	&lv_sender&
+__	_	________________________________________________________________________
+```
+
+
+
+
 
    
