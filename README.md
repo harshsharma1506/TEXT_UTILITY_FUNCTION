@@ -54,6 +54,24 @@ Recently while working on one file interface to AL11, I had to send mail as well
 __	_	________________________________________________________________________
 ```
 
+### Debugging Screenshots
+
+1. Read Text -
+![image](https://github.com/user-attachments/assets/478cd6fb-723d-4cf3-9e70-58d08e3e3ac9)
+
+2. SET Program - ( Before that we scratched that itch )
+![image](https://github.com/user-attachments/assets/f7c890c1-2667-4e94-bfd2-ebce5b763cbb)
+
+![image](https://github.com/user-attachments/assets/a3c03743-fa33-4263-b100-0161bd1e8fb6)
+
+3. Replace and magic :)
+![image](https://github.com/user-attachments/assets/9f28da69-375c-4373-b67a-026e99e60f8b)
+
+4. Mail Indicator -
+![image](https://github.com/user-attachments/assets/006988dd-c9ec-4ef0-8ff0-232b29986fca)
+
+
+
 
 
 
