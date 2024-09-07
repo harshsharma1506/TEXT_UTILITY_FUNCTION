@@ -11,7 +11,7 @@ Recently while working on one file interface to AL11, I had to send mail as well
 * CL_BCS ( Business Communication Service )
 
 ## Few things to note and ramblings - 
-1. There is table for variables where we are mentioning Text Symbols already , it is just a scractch for my logic 
+   There is table for variables where we are mentioning Text Symbols already , it is just a scractch for my logic 
    building itch. So if you see the loop at line#69 , ideally you shall ignore it but it was fun.
 
    ```
@@ -36,9 +36,12 @@ Recently while working on one file interface to AL11, I had to send mail as well
    and then we can take this table and use our select from itab .
 
    ```
-   SELECT tdline FROM @t_text_lines AS a
+   SELECT SINGLE tdline FROM @t_text_lines AS a
    WHERE tdline LIKE '%&%'
-   INTO TABLE @DATA(lt_rem_text).
+   INTO @DATA(ls_rem_text).
    ```
-   
+   After this we must save a warning message in MESS_TAB so that the user can check if there's any variable left
+   at times people use '&' for 'and' so warning is fine.
+
+
    
