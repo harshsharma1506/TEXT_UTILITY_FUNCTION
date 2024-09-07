@@ -2,7 +2,7 @@ FUNCTION z_text_mail_utility.
 *"----------------------------------------------------------------------
 *"*"Local Interface:
 *"  IMPORTING
-*"     REFERENCE(I_TEXT_NAME) TYPE  TDNAME
+*"     REFERENCE(I_TEXT_NAME) TYPE  TDOBNAME
 *"     REFERENCE(I_TXT_ID) TYPE  TDID
 *"     REFERENCE(I_TXT_OBJ) TYPE  TDOBJECT
 *"     REFERENCE(I_SPRAS) TYPE  SPRAS
@@ -17,7 +17,7 @@ FUNCTION z_text_mail_utility.
 *"      T_TEXT_LINES STRUCTURE  TLINE
 *"  EXCEPTIONS
 *"      TEXT_NOT_PRESENT
-*"      OTHERS
+*"      OTHERS_ISSUE
 *"      VARIABLE_NOT_FOUND
 *"      EXTRA_VAR_FOUND
 *"      INCORRECT_PARAM_FOR_MAIL
@@ -35,6 +35,7 @@ FUNCTION z_text_mail_utility.
     WHERE tdid = @i_txt_id
     AND   tdobject = @i_txt_obj
     AND   tdspras = @i_spras
+    AND   tdname = @i_text_name
     INTO @DATA(lv_text_name).
   IF sy-subrc = 0 AND lv_text_name <> i_text_name.
     RAISE text_not_present.                        "first exception
@@ -57,27 +58,30 @@ FUNCTION z_text_mail_utility.
         wrong_access_to_archive = 7
         OTHERS                  = 8.
     IF sy-subrc = 0.
-      RAISE others.
       SEARCH t_text_lines FOR '&'.             "check if there are even text symbols used
       IF sy-subrc = 0.
 *--> Read the table var name first and check if the text symbols are same.
         DATA(lt_text_lines) = t_text_lines[].
-        DATA(lv_var_concat) = space.
-        LOOP AT t_var_name INTO DATA(s_var_name).
-          lv_var_concat = '&' && s_var_name-line && '&'.
-          SEARCH lt_text_lines FOR lv_var_concat AND MARK.
-          DATA(lv_tabix) = sy-tabix.
-          IF sy-subrc = 0.
-            READ TABLE lt_text_lines INTO ls_text_lines INDEX lv_tabix.
+        DATA lv_var_concat TYPE string.
+        IF t_var_name[] IS NOT INITIAL.
+          LOOP AT t_var_name INTO DATA(s_var_name).
+            lv_var_concat = '&' && s_var_name-line && '&'.
+            SEARCH lt_text_lines FOR lv_var_concat AND MARK.
+            DATA(lv_tabix) = sy-tabix.
             IF sy-subrc = 0.
-              REPLACE ALL OCCURRENCES OF lv_var_concat
-              IN ls_text_lines WITH space.
-              MODIFY lt_text_lines FROM ls_text_lines INDEX lv_tabix.
+              READ TABLE lt_text_lines INTO ls_text_lines INDEX lv_tabix.
+              IF sy-subrc = 0.
+                REPLACE ALL OCCURRENCES OF lv_var_concat
+                IN ls_text_lines WITH space.
+                MODIFY lt_text_lines FROM ls_text_lines INDEX lv_tabix.
+              ENDIF.
+            ELSE.
+              RAISE variable_not_found.
             ENDIF.
-          ELSE.
-            RAISE variable_not_found.
-          ENDIF.
-        ENDLOOP.
+          ENDLOOP.
+        ELSE.
+          RAISE others_issue.
+        ENDIF.
 *--> Check if there is any extra text symbol other than mentioned in the table
         SEARCH lt_text_lines FOR '&'.
         IF sy-subrc = 0.
@@ -102,6 +106,8 @@ FUNCTION z_text_mail_utility.
               lines            = t_text_lines.
         ENDIF.
       ENDIF.
+    ELSE.
+      RAISE others_issue.
     ENDIF.
 *--> mail logic
     IF i_set_mail IS NOT INITIAL.
@@ -130,6 +136,13 @@ FUNCTION z_text_mail_utility.
                         i_text          =  lt_doc   " Content (Textual))
                         ).
       lo_send->set_document( i_document = lo_doc ).
+      lo_send->set_sender( i_sender = lo_sender_mail ).
+
+      lo_send->add_recipient(
+        EXPORTING
+          i_recipient     =  lo_recepient_mail
+      ).
+      lo_send->set_send_immediately( i_send_immediately = abap_true ).
       lo_send->send( ).
     ENDIF.
   ENDIF.
