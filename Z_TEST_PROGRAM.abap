@@ -1,4 +1,4 @@
-REPORT z_test_program.
+REPORT z_test_har101.
 DATA: lv_username TYPE string VALUE 'Harsh Sharma',
       lv_port     TYPE string VALUE 'Bandra',
       lv_carriage TYPE string VALUE '19908AB',
@@ -8,19 +8,11 @@ DATA: lv_username TYPE string VALUE 'Harsh Sharma',
       lt_text     TYPE STANDARD TABLE OF tline,
       lt_mess     TYPE STANDARD TABLE OF bapiret2.
 
-ls_var-line = 'LV_USERNAME'.
-APPEND ls_var TO var_name.
-
-ls_var-line = 'LV_PORT'.
-APPEND ls_var TO var_name.
-
-ls_var-line = 'LV_CARRIAGE'.
-APPEND ls_var TO var_name.
-
-ls_var-line = 'LV_SENDER'.
-APPEND ls_var TO var_name.
-
-
+var_name = VALUE #( ( line =  'LV_USERNAME' )
+                   ( line = 'LV_SENDER' )
+                   ( line = 'LV_CARRIAGE' )
+                   ( line = 'LV_PORT' )
+                    ).
 CALL FUNCTION 'Z_TEXT_MAIL_UTILITY'
   EXPORTING
     i_text_name              = 'Z_TEST_NORMAL_TS'
@@ -29,8 +21,8 @@ CALL FUNCTION 'Z_TEXT_MAIL_UTILITY'
     i_spras                  = 'E'
     i_program                = sy-repid
     i_set_mail               = 'X'
-    i_sender_address         = 'xxx@gmail.com'
-    i_recepient_address      = 'yyy@gmail.com'
+    i_sender_address         = 'harsh.sharma@sbdinc.com'
+    i_recepient_address      = 'ravi.singh@sbdinc.com'
     i_title                  = 'tst'
   TABLES
     t_var_name               = var_name
