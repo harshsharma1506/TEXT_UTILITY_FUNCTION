@@ -14,7 +14,7 @@ Recently while working on one file interface to AL11, I had to send mail as well
    There is table for variables where we are mentioning Text Symbols already , it is just a scractch for my logic 
    building itch. So if you see the loop at line#69 , ideally you shall ignore it but it was fun.
 
-   ```
+   ```abap
     LOOP AT t_var_name INTO DATA(s_var_name).
             lv_var_concat = '&' && s_var_name-line && '&'.
             SEARCH lt_text_lines FOR lv_var_concat AND MARK.
@@ -35,7 +35,7 @@ Recently while working on one file interface to AL11, I had to send mail as well
    In ideal scenario this can translate as checking the text table we will be getting from READ_TEXT
    and then we can take this table and use our select from itab .
 
-   ```
+   ```abap
    SELECT SINGLE tdline FROM @t_text_lines AS a
    WHERE tdline LIKE '%&%'
    INTO @DATA(ls_rem_text).
