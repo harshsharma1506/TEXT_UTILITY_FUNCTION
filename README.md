@@ -43,6 +43,23 @@ Recently while working on one file interface to AL11, I had to send mail as well
    After this we must save a warning message in MESS_TAB so that the user can check if there's any variable left
    at times people use '&' for 'and' so warning is fine.
 
+### Issues - 1 
+
+Added one perfect fix to the issue of offsets :) 
+
+```abap
+      LOOP AT lt_doc ASSIGNING FIELD-SYMBOL(<fs>).
+        DATA(ls_var)  = find_any_of( val = <fs>-line sub = '*=/:' ).
+        IF ls_var <> -1.
+          ls_var = ls_var + 1.
+          DATA(ls_var_temp) = ls_var - 1.
+          REPLACE ALL OCCURRENCES OF <fs>-line+ls_var_temp(ls_var) IN <fs>-line WITH space.
+          CONDENSE <fs>-line.
+        ENDIF.
+        CONDENSE <fs>-line.
+      ENDLOOP.
+```
+
 ### SO10 text to be used for testing 
 ```
 *	 	Hello &lv_username&,
