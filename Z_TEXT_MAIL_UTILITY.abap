@@ -39,9 +39,7 @@ FUNCTION z_text_mail_utility.
     AND   tdspras = @i_spras
     AND   tdname = @i_text_name
     INTO @DATA(lv_text_name).
-  IF sy-subrc = 0 AND lv_text_name <> i_text_name.
-    RAISE text_not_present.                        "first exception
-  ELSEIF sy-subrc = 0.
+  IF sy-subrc = 0.                       "first exception
     CALL FUNCTION 'READ_TEXT'                    "read the text
       EXPORTING
         id                      = i_txt_id
@@ -68,7 +66,7 @@ FUNCTION z_text_mail_utility.
         IF t_var_name[] IS NOT INITIAL.
           LOOP AT t_var_name INTO DATA(s_var_name).
             lv_var_concat = '&' && s_var_name-line && '&'.
-            SEARCH lt_text_lines FOR lv_var_concat AND MARK.
+            SEARCH lt_text_lines[] FOR lv_var_concat AND MARK.
             DATA(lv_tabix) = sy-tabix.
             IF sy-subrc = 0.
               READ TABLE lt_text_lines INTO ls_text_lines INDEX lv_tabix.
@@ -140,7 +138,8 @@ FUNCTION z_text_mail_utility.
         DATA(ls_var)  = find_any_of( val = <fs>-line sub = '*=/:' ).
         IF ls_var <> -1.
           ls_var = ls_var + 1.
-          REPLACE ALL OCCURRENCES OF <fs>-line(ls_var) IN <fs>-line WITH space.
+          DATA(ls_var_temp) = ls_var - 1.
+          REPLACE ALL OCCURRENCES OF <fs>-line+ls_var_temp(ls_var) IN <fs>-line WITH space.
           CONDENSE <fs>-line.
         ENDIF.
         CONDENSE <fs>-line.
@@ -168,5 +167,7 @@ FUNCTION z_text_mail_utility.
         APPEND t_mess TO t_mess[].
       ENDIF.
     ENDIF.
+  ELSE.
+    RAISE text_not_present.
   ENDIF.
 ENDFUNCTION.
