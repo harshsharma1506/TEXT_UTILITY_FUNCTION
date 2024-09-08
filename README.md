@@ -51,7 +51,7 @@ Added one perfect fix to the issue of offsets :)
       LOOP AT lt_doc ASSIGNING FIELD-SYMBOL(<fs>).
         DATA(ls_var)  = find_any_of( val = <fs>-line sub = '*=/:' ).
         IF ls_var <> -1.
-          REPLACE ALL OCCURRENCES OF <fs>-line+ls_var(1) IN <fs>-line WITH space.
+          REPLACE ALL OCCURRENCES OF <fs>-line+ls_var(1) IN <fs>-line WITH space. "offsets = var+length_to_ignore( number_of_characters_after_it )
           CONDENSE <fs>-line.
         ENDIF.
         CONDENSE <fs>-line.
