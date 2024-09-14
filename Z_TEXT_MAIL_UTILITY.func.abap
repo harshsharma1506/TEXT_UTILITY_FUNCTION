@@ -58,7 +58,7 @@ FUNCTION z_text_mail_utility.
         wrong_access_to_archive = 7
         OTHERS                  = 8.
     IF sy-subrc = 0.
-      SEARCH t_text_lines FOR '&'.             "check if there are even text symbols used
+      FIND '&' IN TABLE t_text_lines[].           "check if there are even text symbols used
       IF sy-subrc = 0.
 *--> Read the table var name first and check if the text symbols are same.
         DATA(lt_text_lines) = t_text_lines[].
@@ -66,7 +66,7 @@ FUNCTION z_text_mail_utility.
         IF t_var_name[] IS NOT INITIAL.
           LOOP AT t_var_name INTO DATA(s_var_name).
             lv_var_concat = '&' && s_var_name-line && '&'.
-            SEARCH lt_text_lines[] FOR lv_var_concat AND MARK.
+            SEARCH lt_text_lines[] FOR lv_var_concat AND MARK. " in find sy-tabix is not changed hence using search
             DATA(lv_tabix) = sy-tabix.
             IF sy-subrc = 0.
               READ TABLE lt_text_lines INTO ls_text_lines INDEX lv_tabix.
@@ -85,7 +85,7 @@ FUNCTION z_text_mail_utility.
           RAISE others_issue.
         ENDIF.
 *--> Check if there is any extra text symbol other than mentioned in the table
-        SEARCH lt_text_lines FOR '&'.
+        FIND '&' IN TABLE lt_text_lines[].
         IF sy-subrc = 0.
           RAISE extra_var_found.
         ENDIF.
